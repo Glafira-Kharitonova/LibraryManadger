@@ -1,37 +1,34 @@
 import java.util.*;
 import java.io.*;
 
-// Менеджер библиотеки
 public class LibraryManager {
     static class Book implements Serializable {
         private static final long serialVersionUID = 1L;
         String title;
         String author;
-        // Конструктор класса - создает новый объект Book с заданными параметрами
+        // constructor creates a new Book object with given parameters
         public Book(String title, String author) {
             this.title = title;
             this.author = author;
         }
 
-        @Override // Аннотация, указывающая на переопределение метода родительского класса
+        @Override // Annotation indicating override of parent class method
         public String toString() {
             return "Название: " + title + ", Автор: " + author;
         }
     }
-    // Текущий список книг в библиотеке
+    // Current list of books in the library
     private static List<Book> books = new ArrayList<>();
-    // Для чтения ввода пользователя с консоли
+    // For reading user input from console
     private static Scanner scanner = new Scanner(System.in);
-    // Файл для сериализации, сохранения данных
+    // File for serialization, data storage
     private static final String SERIALIZATION_FILE = "library_data.ser";
 
     public static void main(String[] args) {
-        System.out.println("=== Менеджер библиотеки ===");
-
-        // Загрузка данных при новом запуске
+        System.out.println("== Менеджер библиотеки ==");
+        // Load data on new startup
         autoLoadSerializedData();
-
-        // Меню доступных опций для пользователя
+        // Menu of available options for the user
         while (true) {
             System.out.println("---- Меню ----");
             System.out.println("1. Добавить книгу");
@@ -43,8 +40,7 @@ public class LibraryManager {
             System.out.println("7. Загрузить из файла");
             System.out.println("0. Выход");
             System.out.print("Выберите действие: ");
-
-            // Чтение выбора пользователя и дальнейшая обработка
+            // Reading user choice and further processing
             String choice = scanner.nextLine();
             switch (choice) {
                 case "1": addBook(); break;
@@ -55,7 +51,7 @@ public class LibraryManager {
                 case "6": saveToFile(); break;
                 case "7": loadFromFile(); break;
                 case "0":
-                    askToSaveBeforeExit(); // Спрашиваем о сохранении данных перед выходом
+                    askToSaveBeforeExit(); // Ask about saving data before exit
                     return;
                 default: System.out.println("Не понимаю Вас. Попробуйте снова. Нужно ввести лишь одну цифру.");
             }
@@ -71,7 +67,7 @@ public class LibraryManager {
         return author.matches(regex);
     }
 
-    // Метод для добавления новой книги
+    // Method for adding a new book
     private static void addBook() {
         System.out.println("\nДобавление новой книги:");
         String title;
@@ -103,42 +99,32 @@ public class LibraryManager {
             }
             break;
         }
-
-        // Создание и добавление книги
         Book newBook = new Book(title, author);
         books.add(newBook);
         System.out.println("Книга успешно добавлена!");
     }
 
-    // Метод для редактирования существующей книги
+    // Method for editing an existing book
     private static void editBook() {
         if (books.isEmpty()) {
             System.out.println("Список книг пуст!");
             return;
         }
-
         System.out.println("\n--- Редактирование книги ---");
-        displayBooks(); // Показ списка книг для выбора
-
+        displayBooks();
         int index;
         while (true) {
             System.out.print("Введите номер книги для редактирования (1-" + books.size() + "): ");
             try {
-                index = Integer.parseInt(scanner.nextLine()) - 1; // -1 т.к. индексы с 0
-
-                // Проверка корректности введенного индекса
-                if (index >= 0 && index < books.size()) {
-                    break; // Корректный номер, выходим из цикла
-                } else {
-                    System.out.println("Ошибка: введите номер от 1 до " + books.size() + "!");
-                }
+                index = Integer.parseInt(scanner.nextLine()) - 1;
+                // Check validity of entered index
+                if (index >= 0 && index < books.size()) break;
+                else System.out.println("Ошибка: введите номер от 1 до " + books.size() + "!");
             } catch (NumberFormatException e) {
                 System.out.println("Ошибка: введите корректный номер!");
             }
         }
-        Book book = books.get(index); // Получение книги по индексу
-
-        // Выбор что редактировать
+        Book book = books.get(index); // Get book by index
         System.out.println("\nЧто вы хотите отредактировать?");
         System.out.println("1. Только название");
         System.out.println("2. Только автора");
@@ -148,29 +134,25 @@ public class LibraryManager {
         String choice;
         while (true) {
             choice = scanner.nextLine();
-            if (choice.matches("[1-3]")) { // Проверяем что введена цифра от 1 до 3
-                break;
-            } else {
+            if (choice.matches("[1-3]")) break;
+            else {
                 System.out.println("Ошибка: введите цифру от 1 до 3!");
                 System.out.print("Выберите вариант (1-3): ");
             }
         }
-        // Редактирование в зависимости от выбора
+        // Edit depending on choice
         switch (choice) {
-            case "1": // Только название
-                editTitle(book);
-                break;
-            case "2": // Только автора
-                editAuthor(book);
-                break;
-            case "3": // Название и автора
+            case "1": editTitle(book); break; // Title 
+            case "2": editAuthor(book); break; // Author
+            case "3": // Title and author
                 editTitle(book);
                 editAuthor(book);
                 break;
         }
-        System.out.println("Книга успешно отредактирована!");
+        System.out.println("Книга отредактирована!");
     }
-    // Метод для редактирования названия
+    
+    // Method for editing title
     private static void editTitle(Book book) {
         while (true) {
             System.out.print("Введите новое название [" + book.title + "]: ");
@@ -188,7 +170,7 @@ public class LibraryManager {
         }
     }
 
-    // Метод для редактирования автора
+    // Method for editing author
     private static void editAuthor(Book book) {
         while (true) {
             System.out.print("Введите нового автора [" + book.author + "]: ");
@@ -208,12 +190,11 @@ public class LibraryManager {
 
     private static void deleteBook() {
         if (books.isEmpty()) {
-            System.out.println("Список книг пуст! Нечего удалять.");
+            System.out.println("Список книг пуст!");
             return;
         }
         System.out.println("\n--- Удаление книги ---");
         displayBooks();
-
         int index;
         while (true) {
             System.out.print("Введите номер книги для удаления (1-" + books.size() + "): ");
@@ -226,7 +207,6 @@ public class LibraryManager {
             }
         }
         Book bookToDelete = books.get(index);
-
         while (true) {
             System.out.println("\nВы выбрали для удаления:");
             System.out.println("Название: " + bookToDelete.title);
@@ -234,35 +214,28 @@ public class LibraryManager {
             System.out.print("Вы уверены, что хотите удалить эту книгу? (да/нет): ");
 
             String choice = scanner.nextLine().trim().toLowerCase();
-
             if (choice.equals("да") || choice.equals("д")) {
-                // Удаляем книгу из списка
                 books.remove(index);
-                System.out.println("✓ Книга успешно удалена!");
+                System.out.println("Книга удалена!");
                 break;
             } else if (choice.equals("нет") || choice.equals("н")) {
                 System.out.println("Удаление отменено.");
                 break;
-            } else {
-                System.out.println("Ошибка: введите 'да' или 'нет'!");
-            }
+            } else System.out.println("Ошибка: введите 'да' или 'нет'!");
         }
     }
 
-    // Метод для отображения всех книг
+    // Method for displaying all books
     private static void displayBooks() {
         if (books.isEmpty()) {
             System.out.println("Список книг пуст!");
             return;
         }
         System.out.println("\n--- Список книг ---");
-        // Цикл по всем книгам с нумерацией
-        for (int i = 0; i < books.size(); i++) {
-            System.out.println((i + 1) + ". " + books.get(i));
-        }
+        for (int i = 0; i < books.size(); i++) System.out.println((i + 1) + ". " + books.get(i));
     }
 
-    // Метод для поиска книг по различным атрибутам
+    // Method for searching books by various attributes
     private static void searchBooks() {
         if (books.isEmpty()) {
             System.out.println("Список книг пуст!");
@@ -270,7 +243,6 @@ public class LibraryManager {
         }
         while (true) {
             System.out.println("\n--- Поиск книг ---");
-
             String choice;
             while (true) {
                 System.out.println("1. По названию");
@@ -280,7 +252,7 @@ public class LibraryManager {
                 if (choice.equals("1") || choice.equals("2")) break;
                 else System.out.println("Ошибка: введите 1 или 2!");
             }
-            // Проверка ввода поискового запроса
+            // Check search input
             String searchValue;
             while (true) {
                 System.out.print("Введите значение для поиска: ");
@@ -289,7 +261,7 @@ public class LibraryManager {
                     System.out.println("Ошибка: вы ничего не ввели!");
                     continue;
                 }
-                // Проверка корректности ввода в зависимости от выбранного критерия
+                // Check input validity
                 if (choice.equals("1")) {
                     if (!isValidTitle(searchValue)) {
                         System.out.println("Ошибка: поисковый запрос может содержать только русские и латинские буквы, цифры, пробелы и специальные символы");
@@ -303,17 +275,17 @@ public class LibraryManager {
                 }
                 break;
             }
-            List<Book> results = new ArrayList<>(); // Список для найденных книг
-            // Поиск в зависимости от выбранного критерия
+            List<Book> results = new ArrayList<>(); // Found books
+            // Search
             switch (choice) {
-                case "1": // Поиск по названию
+                case "1": // Search by title
                     for (Book book : books) {
                         if (book.title.toLowerCase().contains(searchValue.toLowerCase())) {
                             results.add(book);
                         }
                     }
                     break;
-                case "2": // Поиск по автору
+                case "2": // Search by author
                     for (Book book : books) {
                         if (book.author.toLowerCase().contains(searchValue.toLowerCase())) {
                             results.add(book);
@@ -321,17 +293,15 @@ public class LibraryManager {
                     }
                     break;
             }
-            // Вывод результатов поиска
+            // Display search results
             if (results.isEmpty()) {
                 System.out.println("\nКниги не найдены!");
-
-                // Предложение повторить поиск
+                // Offer to retry
                 System.out.println("\nЧто вы хотите сделать?");
                 System.out.println("1. Попробовать другой поисковый запрос");
                 System.out.println("2. Выбрать другой критерий поиска (название/автор)");
                 System.out.println("3. Вернуться в главное меню");
                 System.out.print("Выберите действие (1-3): ");
-
                 String retryChoice;
                 while (true) {
                     retryChoice = scanner.nextLine().trim();
@@ -342,47 +312,42 @@ public class LibraryManager {
                     }
                 }
                 switch (retryChoice) {
-                    case "1": continue; // Продолжаем цикл - новый поисковый запрос с тем же критерием
-                    case "2": break; // Продолжаем цикл - начнем заново с выбора критерия
-                    case "3": return; // Выходим из метода - возврат в главное меню
+                    case "1": continue; // New search query with same criteria
+                    case "2": break; // Start over with criteria selection
+                    case "3": return; // Exit method
                 }
             } else {
                 System.out.println("\nНайдено книг: " + results.size());
                 System.out.println("--- Результаты поиска ---");
-                for (int i = 0; i < results.size(); i++) {
-                    System.out.println((i + 1) + ". " + results.get(i));
-                }
+                for (int i = 0; i < results.size(); i++) System.out.println((i + 1) + ". " + results.get(i));
             }
         }
     }
 
-    // Метод для сохранения книг в файл
+    // Method for saving books to file
     private static void saveToFile() {
         System.out.print("Введите имя файла для сохранения: ");
         String filename = scanner.nextLine();
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
-            // Запись каждой книги в файл в формате CSV
-            for (Book book : books) {
-                writer.println(book.title + ", " + book.author);
-            }
-            System.out.println("Данные успешно сохранены в файл: " + filename);
+            // Write each book to file
+            for (Book book : books) writer.println(book.title + ", " + book.author);
+            System.out.println("Данные успешно сохранены в файл.");
         } catch (IOException e) {
             System.out.println("Ошибка при сохранении файла: " + e.getMessage());
         }
     }
 
-    // Метод для загрузки книг из файла
+    // Method for loading books from file
     private static void loadFromFile() {
         System.out.print("Введите имя файла для загрузки: ");
         String filename = scanner.nextLine();
-        // Проверка существования файла
+        // Check file existence
         File file = new File(filename);
         if (!file.exists()) {
             System.out.println("Файл не существует!");
             return;
         }
-
-        List<Book> loadedBooks = new ArrayList<>(); // Временный список для загруженных книг
+        List<Book> loadedBooks = new ArrayList<>(); // Temporary list for loaded books
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -400,15 +365,13 @@ public class LibraryManager {
             System.out.println("Ошибка при загрузке файла: " + e.getMessage());
         }
     }
-    // Метод для запроса сохранения перед выходом
+    
+    // Method for asking about saving before exit
     private static void askToSaveBeforeExit() {
         if (books.isEmpty()) {
             System.out.println("До свидания!");
             return;
         }
-        System.out.println("\nУ вас есть несохраненные данные!");
-        System.out.println("Количество книг в библиотеке: " + books.size());
-
         while (true) {
             System.out.print("Хотите сохранить данные перед выходом? (да/нет): ");
             String answer = scanner.nextLine().trim().toLowerCase();
@@ -419,29 +382,26 @@ public class LibraryManager {
             } else if (answer.equals("нет") || answer.equals("н")) {
                 System.out.println("Данные не сохранены. До свидания!");
                 break;
-            } else {
-                System.out.println("Пожалуйста, введите 'да' или 'нет'");
-            }
+            } else System.out.println("Пожалуйста, введите 'да' или 'нет'");
         }
     }
 
-    // Метод для сериализации данных (сохранение в бинарный файл)
+    // Method for data serialization (saving to binary file)
     private static void saveSerializedData() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SERIALIZATION_FILE))) {
             oos.writeObject(books);
             System.out.println("Данные успешно сохранены.");
-            System.out.println("Сохранено книг: " + books.size());
         } catch (IOException e) {
             System.out.println("Ошибка при сохранении данных: " + e.getMessage());
         }
     }
 
-    // Автоматическая загрузка данных при запуске
+    // Automatic data loading on startup
     private static void autoLoadSerializedData() {
         File file = new File(SERIALIZATION_FILE);
         if (!file.exists()) return;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SERIALIZATION_FILE))) {
-            @SuppressWarnings("unchecked") // аннотация для того, чтобы предупреждения не выводились
+            @SuppressWarnings("unchecked") // annotation to suppress warnings
             List<Book> loadedBooks = (List<Book>) ois.readObject();
             books = loadedBooks;
             System.out.println("Автоматически загружено книг: " + books.size());
