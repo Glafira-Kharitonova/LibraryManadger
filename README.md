@@ -1,5 +1,5 @@
 # LibraryManadger
-Library manager written in Java.
+Library manager on Java.
 
 Two implementations - for working in the console(LibraryManadger.java) and a manager with a graphical interface(LibraryManadgerGUI.java).
 
