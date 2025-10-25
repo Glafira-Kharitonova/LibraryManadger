@@ -3,6 +3,7 @@ import java.io.*;
 
 public class LibraryManager {
     static class Book implements Serializable {
+        @Serial
         private static final long serialVersionUID = 1L;
         String title;
         String author;
@@ -20,7 +21,7 @@ public class LibraryManager {
     // Current list of books in the library
     private static List<Book> books = new ArrayList<>();
     // For reading user input from console
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
     // File for serialization, data storage
     private static final String SERIALIZATION_FILE = "library_data.ser";
 
@@ -142,7 +143,7 @@ public class LibraryManager {
         }
         // Edit depending on choice
         switch (choice) {
-            case "1": editTitle(book); break; // Title 
+            case "1": editTitle(book); break; // Title
             case "2": editAuthor(book); break; // Author
             case "3": // Title and author
                 editTitle(book);
@@ -151,7 +152,7 @@ public class LibraryManager {
         }
         System.out.println("Книга отредактирована!");
     }
-    
+
     // Method for editing title
     private static void editTitle(Book book) {
         while (true) {
@@ -267,7 +268,7 @@ public class LibraryManager {
                         System.out.println("Ошибка: поисковый запрос может содержать только русские и латинские буквы, цифры, пробелы и специальные символы");
                         continue;
                     }
-                } else if (choice.equals("2")) {
+                } else {
                     if (!isValidAuthor(searchValue)) {
                         System.out.println("Ошибка: поисковый запрос может содержать только русские и латинские буквы, пробелы и символы: -.");
                         continue;
@@ -365,7 +366,7 @@ public class LibraryManager {
             System.out.println("Ошибка при загрузке файла: " + e.getMessage());
         }
     }
-    
+
     // Method for asking about saving before exit
     private static void askToSaveBeforeExit() {
         if (books.isEmpty()) {
@@ -380,6 +381,8 @@ public class LibraryManager {
                 System.out.println("До свидания!");
                 break;
             } else if (answer.equals("нет") || answer.equals("н")) {
+                File file = new File(SERIALIZATION_FILE);
+                if (file.exists()) file.delete();
                 System.out.println("Данные не сохранены. До свидания!");
                 break;
             } else System.out.println("Пожалуйста, введите 'да' или 'нет'");
